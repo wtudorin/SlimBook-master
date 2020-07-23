@@ -1,0 +1,300 @@
+﻿@model SlimBook.Models.ViewModels.OrderDetailsVM
+@using SlimBook.Utility
+@using Microsoft.Extensions.Options
+@inject IOptions<SlimBook.Utility.StripeSettings> Stripe
+
+<form method="post">
+    <input hidden asp-for="@Model.OrderHeader.Id" />
+    <br />
+    <div class="backgroundWhite container">
+        <div class="card">
+            <div class="card-header bg-dark text-light ml-0 row container">
+                <div class="col-12 d-none d-md-block col-md-6 pb-1">
+                    <i class="fas fa-shopping-cart"></i> &nbsp; Order Summary
+                </div>
+                <div class="col-12 col-md-4 offset-md-2 text-right">
+                    <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="btn btn-outline-info form-control btn-sm">Back to Orders</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="container rounded p-2">
+                    <div class="row">
+                        <div class="col-12 col-lg-6 pb-4">
+                            <div class="row">
+                                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-primary">PickUp Details:</span>
+                                </h4>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-4">Name</div>
+                                <div class="col-8">
+                                    @if (Model.IsInternalUser)
+                                    {
+                                        <input asp-for="OrderHeader.Name" type="text" class="form-control" />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="OrderHeader.Name" readonly type="text" class="form-control" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-4">Phone</div>
+                                <div class="col-8">
+                                    @if (Model.IsInternalUser)
+                                    {
+                                        <input asp-for="OrderHeader.PhoneNumber" type="text" class="form-control" />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="OrderHeader.PhoneNumber" readonly type="text" class="form-control" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-4">Address</div>
+                                <div class="col-8">
+                                    @if (Model.IsInternalUser)
+                                    {
+                                        <input asp-for="OrderHeader.StreetAddress" type="text" class="form-control" />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="OrderHeader.StreetAddress" readonly type="text" class="form-control" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-4">City</div>
+                                <div class="col-8">
+                                    @if (Model.IsInternalUser)
+                                    {
+                                        <input asp-for="OrderHeader.City" type="text" class="form-control" />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="OrderHeader.City" readonly type="text" class="form-control" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-4">State</div>
+                                <div class="col-8">
+                                    @if (Model.IsInternalUser)
+                                    {
+                                        <input asp-for="OrderHeader.State" type="text" class="form-control" />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="OrderHeader.State" readonly type="text" class="form-control" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-4">Zip Code</div>
+                                <div class="col-8">
+                                    @if (Model.IsInternalUser)
+                                    {
+                                        <input asp-for="OrderHeader.PostalCode" type="text" class="form-control" />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="OrderHeader.PostalCode" readonly type="text" class="form-control" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-4">Email</div>
+                                <div class="col-8">
+                                    @if (Model.IsInternalUser)
+                                    {
+                                        <input asp-for="OrderHeader.ApplicationUser.Email" type="text" class="form-control" />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="OrderHeader.ApplicationUser.Email" readonly type="text" class="form-control" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-4">Order Date</div>
+                                <div class="col-8">
+                                    <input value="@Model.OrderHeader.OrderDate.ToShortDateString()" readonly type="text" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-4">Carrier</div>
+                                <div class="col-8">
+                                    @if (Model.IsInternalUser)
+                                    {
+                                        <input asp-for="OrderHeader.Carrier" id="carrier" type="text" class="form-control" />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="OrderHeader.Carrier" readonly type="text" class="form-control" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="row my-1">
+                                <div class="col-4">Tracking</div>
+                                <div class="col-8">
+                                    @if (Model.IsInternalUser)
+                                    {
+                                        <input asp-for="OrderHeader.TrackingNumber" id="trackingNumber" type="text" class="form-control" />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="OrderHeader.TrackingNumber" readonly type="text" class="form-control" />
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="row my-1">
+                                <div class="col-4">Shipping Date</div>
+                                <div class="col-8">
+                                    <input id="shippingDate" value="@Model.OrderHeader.ShippingDate.ToShortDateString()" type="text" readonly class="form-control" />
+                                </div>
+                            </div>
+
+                            @if (Model.IsInternalUser)
+                            {
+                                <div class="row my-1">
+                                    <div class="col-4">Transaction ID</div>
+                                    <div class="col-8">
+                                        <input type="text" asp-for="OrderHeader.TransactionId" readonly class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    @if (Model.OrderHeader.TransactionId == null)
+                                    {
+
+                                        <div class="col-4">Payment Due Date</div>
+                                        <div class="col-8">
+                                            <input value="@Model.OrderHeader.PaymentDueDate.ToShortDateString()" readonly type="text" class="form-control" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-4">Payment Date</div>
+                                        <div class="col-8">
+                                            <input readonly value="@Model.OrderHeader.PaymentDate.ToShortDateString()" id="paymentDate" type="text" class="form-control" />
+                                        </div>
+                                    }
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-4">Payment Status</div>
+                                    <div class="col-8">
+                                        <input asp-for="OrderHeader.PaymentStatus" type="text" readonly class="form-control" />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-12 col-lg-5 offset-lg-1">
+                            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-primary">Order Summary</span>
+                            </h4>
+                            <ul class="list-group mb-3">
+                                @foreach (var item in Model.OrderDetails)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <div class="row container">
+                                            <div class="col-8">
+                                                <input type="hidden" asp-for="@item.Id" value="" />
+                                                <h6 class="my-0 text-primary">@item.Product.Title</h6>
+                                                <small class="text-muted">Price : @item.Price</small>
+                                                <small class="text-muted">Quantity : @item.Count</small>
+                                            </div>
+                                            <div class="col-4">
+                                                <h6 class="text-success text-right ">@((item.Count * item.Price).ToString("c"))</h6>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                                <li class="list-group-item bg-info">
+                                    <div class="row container">
+                                        <div class="col-6">
+                                            <h6 class="text-white">TOTAL </h6>
+                                        </div>
+                                        <div class="col-6 text-right">
+                                            <h6 class="text-white font-weight-bold">@Model.OrderHeader.OrderTotal.ToString("c")</h6>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            @if (Model.IsInternalUser)
+                            {
+                                <br />
+                                @if (Model.OrderHeader.OrderStatus == SD.StatusApproved)
+                                {
+                                    <a asp-action="StartProcessing" asp-route-id="@Model.OrderHeader.Id" class="btn btn-primary form-control">Start Processing</a>
+                                }
+                                @if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
+                                {
+                                    <input type="submit" value="Ship Order"
+                                           onclick="return validateInput()"
+                                           class="btn btn-primary form-control"
+                                           formaction="/Admin/Order/ShipOrder?id=@Model.OrderHeader.Id"
+                                           formmethod="post" />
+                                }
+
+                            }
+                            else
+                            {
+                                <label class="btn btn-primary form-control">@Model.OrderHeader.OrderStatus</label>
+
+                            }
+
+                            @if (Model.OrderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment && Model.OrderHeader.OrderStatus == SD.StatusShipped)
+                                {
+                                    var orderTotal = Model.OrderHeader.OrderTotal * 100;
+
+                                    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                        data-key="@Stripe.Value.PublishableKey"
+                                        data-amount="@orderTotal"
+                                        data-template-name="Slim BNook"
+                                        data-label="Place Order"
+                                        data-description="Get Books, For Less"
+                                        data-locale="auto"
+                                        data-emaail="some@some.com"
+                                        data-allow-remember-me="false" ,
+                                        data-image="https://stripe.com/img/documentation/checkout/marketplace.png">
+                                </script>
+                                <script>
+                                    document.getElementsByClassName("stripe-button-el")[0].style.display = "none";
+                                </script>
+                                <button type="submit" value="Pay Now" class="btn btn-success form-control">Pay Now</button>
+                            }
+
+                            @if (Model.OrderHeader.OrderStatus != SD.StatusRefunded && Model.OrderHeader.OrderStatus != SD.StatusCancelled && Model.IsInternalUser)
+                            {
+                                <div class="pt-2">
+                                    <a asp-action="CancelOrder" asp-route-id="@Model.OrderHeader.Id"
+                                       class="btn btn-danger form-control">Cancel Order</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        function validateInput() {
+            var trackingNumber = document.getElementById("trackingNumber").value;
+            var carrier = document.getElementById("carrier").value;
+            if (trackingNumber.toString() == '') {
+                swal("Error", "Please enter Tracking number", "error");
+                return false;
+            }
+            if (carrier.toString() == '') {
+                swal("Error", "Please enter Carrier", "error");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
